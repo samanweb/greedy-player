@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Horizontal Audio Player</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #222;
+    }
+
+    #audioPlayerContainer {
+      border: 2px solid #fff;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #333;
+    }
+
+    #audioPlayer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row;
+    }
+
+    audio {
+      width: 200px;
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #d9534f;
+      color: #fff;
+      border: none;
+      padding: 8px;
+      margin: 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    #progressBar {
+      width: 200px;
+      height: 5px;
+      background-color: #fff;
+      position: relative;
+      overflow: hidden;
+      margin-left: 10px;
+    }
+
+    #progress {
+      height: 100%;
+      width: 0;
+      background-color: #5bc0de;
+    }
+
+    #remainingTime {
+      margin-left: 10px;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="audioPlayerContainer">
+    <div id="audioPlayer">
+      <audio id="audio" src="bday.ogg"></audio>
+      <button id="playPauseBtn" onclick="togglePlayPause()"><i class="fas fa-play"></i></button>
+      <button id="volumeBtn" onclick="toggleMute()"><i class="fas fa-volume-up"></i></button>
+      <div id="progressBar">
+        <div id="progress"></div>
+      </div>
+      <span id="remainingTime">00:00</span>
+    </div>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const volumeBtn = document.getElementById('volumeBtn');
+    const progress = document.getElementById('progress');
+    const remainingTime = document.getElementById('remainingTime');
+
+    function togglePlayPause() {
+      if (audio.paused) {
+        audio.play().catch(error => console.error(error));
+        playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+      } else {
+        audio.pause();
+        playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+      }
+    }
+
+    function toggleMute() {
+      audio.muted = !audio.muted;
+      volumeBtn.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    }
+
+    audio.addEventListener('timeupdate', updateProgressBar);
+    audio.addEventListener('timeupdate', updateRemainingTime);
+
+    function updateProgressBar() {
+      const value = (audio.currentTime / audio.duration) * 100;
+      progress.style.width = value + '%';
+    }
+
+    function updateRemainingTime() {
+      const remainingMinutes = Math.floor((audio.duration - audio.currentTime) / 60);
+      const remainingSeconds = Math.floor(audio.duration - audio.currentTime) % 60;
+      const formattedTime = `${String(remainingMinutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+      remainingTime.textContent = formattedTime;
+    }
+  </script>
+</body>
+</html>
